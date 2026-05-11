@@ -2,54 +2,34 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
-// const { sendWelcomeEmail } = require('../email/mailer');
+//const { sendWelcomeEmail } = require('../email/mailer');
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
     const { username, password } = req.body;
-
     if (!username || !password)
-      return res.status(400).json({
-        error: 'Username and password required'
-      });
+      return res.status(400).json({ error: 'Username and password required' });
 
     const existing = await User.findOne({ username });
-
-    if (existing)
-      return res.status(400).json({
-        error: 'Username already taken'
-      });
+    if (existing) return res.status(400).json({ error: 'Username already taken' });
 
     const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({ username, password: hash });
 
-    const user = await User.create({
-      username,
-      password: hash
-    });
-
-    // Email temporarily disabled
+    // Send welcome notification email (JSP-style template)
     // await sendWelcomeEmail(username);
 
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
     res.status(201).json({
       token,
-      user: {
-        _id: user._id,
-        username: user.username,
-      },
+      user: { _id: user._id, username: user.username },
     });
-
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -57,53 +37,32 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-
     const user = await User.findOne({ username });
-
-    if (!user)
-      return res.status(401).json({
-        error: 'User not found'
-      });
+    if (!user) return res.status(401).json({ error: 'User not found' });
 
     const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(401).json({ error: 'Incorrect password' });
 
-    if (!valid)
-      return res.status(401).json({
-        error: 'Incorrect password'
-      });
-
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
     res.json({
       token,
-      user: {
-        _id: user._id,
-        username: user.username,
-      },
+      user: { _id: user._id, username: user.username },
     });
-
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// GET /api/auth/users
+// GET /api/auth/users  — list all users (for starting DMs)
 router.get('/users', async (req, res) => {
   try {
     const users = await User.find({}, 'username status lastSeen');
-
     res.json(users);
-
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 });
 
