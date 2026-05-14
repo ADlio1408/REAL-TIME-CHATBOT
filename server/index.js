@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// const { initSocket } = require('./socket');
-
+//const { initSocket } = require('./socket');
 const authRoutes = require('./routes/auth');
 const roomRoutes = require('./routes/rooms');
 const messageRoutes = require('./routes/messages');
@@ -24,19 +23,16 @@ app.use('/api/messages', messageRoutes);
 // Health check
 app.get('/', (req, res) => res.json({ status: 'Chat API running' }));
 
-// Socket temporarily disabled
-// initSocket(server);
+// Initialize Socket.io
+//initSocket(server);
 
 // Connect to MongoDB and start server
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
-
-    server.listen(process.env.PORT || 5000, () => {
-      console.log(
-        `🚀 Server running on http://localhost:${process.env.PORT || 5000}`
-      );
+    server.listen(process.env.PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${process.env.PORT}`);
     });
   })
   .catch((err) => {

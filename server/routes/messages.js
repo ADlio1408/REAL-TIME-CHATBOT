@@ -6,24 +6,18 @@ const auth = require('../middleware/auth');
 router.get('/:roomId', auth, async (req, res) => {
   try {
     const { page = 1, limit = 30 } = req.query;
-
     const skip = (Number(page) - 1) * Number(limit);
 
-    const messages = await Message.find({
-      room: req.params.roomId
-    })
-      .sort({ createdAt: -1 })
+    const messages = await Message.find({ room: req.params.roomId })
+      .sort({ createdAt: -1 })       // newest first for pagination
       .skip(skip)
       .limit(Number(limit))
-      .populate('sender', 'username')
-      .lean();
+      .populate('sender', 'username');
 
+    // Return in chronological order
     res.json(messages.reverse());
-
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 });
 

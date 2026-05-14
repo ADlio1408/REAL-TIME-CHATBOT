@@ -1,54 +1,30 @@
-# REAL-TIME-CHATBOT
-
-# Database & Data Modelling Engineer (MongoDB)
+# Backend API & Authentication Module
 
 ## Work Done
 
-Implemented the database layer for the real-time chat application using MongoDB and Mongoose.
-
-### Features Implemented
-- Designed schemas for Users, Rooms, and Messages
-- Created relationships using ObjectId references
-- Implemented chat history storage
-- Added presence tracking using status and lastSeen
-- Implemented efficient message pagination
-- Optimized queries using sorting, skip, limit, and lean()
-- Added indexing for performance optimization
-
----
+* Implemented user authentication using JWT
+* Added login and signup APIs
+* Created protected routes middleware
+* Added room creation and user management
+* Implemented message APIs
+* Connected MongoDB using Mongoose
+* Added API validation and security handling
 
 ## Files Worked On
-- models/User.js
-- models/Room.js
-- models/Message.js
-- routes/messages.js
-- index.js
-- routes/auth.js
 
----
+* server/index.js
+* server/routes/auth.js
+* server/routes/messages.js
+* server/routes/rooms.js
+* server/models/User.js
+* server/models/Room.js
+* server/models/Message.js
+* server/middleware/auth.js
 
-## Technologies Used
-- MongoDB
-- Mongoose
-- Express.js
-- Node.js
+## Tech Stack
 
----
-
-## How to Run
-
-```bash
-cd server
-npm install
-npm start
-```
-
-Backend runs on:
-```text
-http://localhost:5000
-```
-
-MongoDB runs locally on:
-```text
-mongodb://localhost:27017/chatapp
-```
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* JWT Authentication
